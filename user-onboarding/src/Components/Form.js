@@ -3,10 +3,8 @@ import {withFormik, Form, Field} from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
-const FormComponent = () =>{
-  const [user, setUser] = useState({
-    //firstName: ""
-  });
+const FormComponent = ({values, errors, touched}) =>{
+  const [user, setUser] = useState([]);
 
   return (
     <div className="user-form">
@@ -18,6 +16,9 @@ const FormComponent = () =>{
         name="firstName"
         placeholder="First"
         />
+        {touched.firstName && errors.firstName &&(
+          <p className="errors">{errors.firstName}</p>
+        )}
         <label htmlFor="last name">Last name </label>
         <Field
         id="last name"
@@ -25,6 +26,9 @@ const FormComponent = () =>{
         name="lastName"
         placeholder="Last"
         />
+        {touched.lastName && errors.lastName &&(
+          <p className="errors">{errors.lastName}</p>
+        )}
         <label htmlFor="email">E-mail </label>
         <Field
         id="email"
@@ -32,6 +36,9 @@ const FormComponent = () =>{
         name="email"
         placeholder="E-mail"
         />
+        {touched.email && errors.email &&(
+          <p className="errors">{errors.email}</p>
+        )}
         <label htmlFor="password">Password </label>
         <Field
         id="password"
@@ -39,12 +46,18 @@ const FormComponent = () =>{
         name="password"
         placeholder="Password"
         />
+        {touched.password && errors.password &&(
+          <p className="errors">{errors.password}</p>
+        )}
         <label htmlFor="tos">Terms of Service
         <Field
         id="tos"
         type="checkbox"
         name="tos"
         />
+        {touched.tos && errors.tos &&(
+          <p className="errors">{errors.tos}</p>
+        )}
         </label>
         <label required htmlFor="newsletter">Sign Up for our monthly newsletter</label>
         <Field
@@ -67,8 +80,20 @@ const FormikFormComponent = withFormik({
       password: "",
       tos: false,
       newsletter: false,
-    }
-  }
+    };
+  },
+  validationSchema: Yup.object().shape({
+    firstName: Yup.string().required('* please enter a name'),
+    lastName: Yup.string().required('* please enter a name!'),
+    email: Yup.string()
+      .email('Is this even a real e-mail?')
+      .required('No seriously, put in a real e-mail'),
+    password: Yup.string()
+      .min(8, 'Must be at least 8 characters')
+      .max(10, 'But still less than 10 characters')
+      .required('Please enter a password'),
+    tos: Yup.string().required('Either click or use a different site'),
+  })
 })(FormComponent);
 
 export default FormikFormComponent;
